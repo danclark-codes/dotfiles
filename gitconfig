@@ -1,5 +1,8 @@
 [init]
 	branch = main
+[user]
+	name = "Daniel Clark"
+	email = "djclarky@gmail.com"
 [credential "https://github.com"]
 	helper = 
 	helper = !/usr/bin/gh auth git-credential

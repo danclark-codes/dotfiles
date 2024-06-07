@@ -19,3 +19,6 @@ ln -sf $dotfiles_dir/bash_aliases ~/.bash_aliases
 ln -sf $dotfiles_dir/gitconfig ~/.gitconfig
 ln -sf $dotfiles_dir/zsh/zshrc ~/.zshrc
 
+
+# LazyVim
+ln -sf $dotfiles_dir/config/nvim ~/.config/nvim/

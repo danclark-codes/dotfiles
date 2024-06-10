@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cargo install alacritty --quiet
+
+# We use Alacritty's default Linux config directory as our storage location here.
+mkdir -p ~/.config/alacritty/themes
+git clone --depth=1 https://github.com/alacritty/alacritty-theme ~/.config/alacritty/themes

@@ -81,3 +81,7 @@ fi
 # fzf - a general purpose command-line fuzzy finder
 # github.com/junegunn/fzf
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+# rust
+source "$HOME/.cargo/env"
+. "$HOME/.cargo/env"

@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# create .fonts folder
+mkdir -p ~/.fonts/UbuntuMono/
+
+# download and install if missing
+if [ -z "$(ls -A ~/.fonts/UbuntuMono/*.ttf 2>/dev/null)" ]; then
+	# UbuntuMono nerd font
+	curl -OL https://github.com/ryanoasis/nerd-fonts/releases/latest/download/UbuntuMono.tar.xz
+
+	# extract
+	tar -xf UbuntuMono.tar.xz -C ~/.fonts/UbuntuMono/
+
+	# refresh font cache, which references ~/.fonts/ automatically
+	fc-cache -fv 2>&1 > /dev/null # Suppressing output but showing errors
+
+	rm UbuntuMono.tar.xz
+fi

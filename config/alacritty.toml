@@ -1,0 +1,15 @@
+# themes from github.com/alacritty/alacritty-theme
+
+import = ["~/.config/alacritty/themes/themes/dracula.toml"]
+
+[font]
+size = 12
+
+[font.normal]
+family = "Ubuntu Mono"
+
+[window]
+decorations = "none"
+padding.x = 7
+padding.y = 0
+

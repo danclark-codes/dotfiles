@@ -4,8 +4,8 @@
 mkdir -p ~/.fonts/SourceCodePro/
 
 # download and install if missing
-if [ -z "find ~/.fonts/SourceCodePro/ -name \"*.ttf\"" ]; then
-	# Source Code Pro nerd font
+if [ -z "$(ls -A ~/.fonts/SourceCodePro/*.ttf 2>/dev/null)" ]; then
+	# SourceCodePro nerd font
 	curl -OL https://github.com/ryanoasis/nerd-fonts/releases/latest/download/SourceCodePro.tar.xz
 
 	# extract
@@ -16,4 +16,3 @@ if [ -z "find ~/.fonts/SourceCodePro/ -name \"*.ttf\"" ]; then
 
 	rm SourceCodePro.tar.xz
 fi
-

@@ -14,8 +14,9 @@ alias home='cd $HOME'
 alias dot='$GHREPOS/dotfiles'
 
 # git
-ga='git add --all'
-gs='git status'
+gia='git add --all'
+gis='git status'
+dirtypush='git add --all;git commit -m "dirty push - $(date +%Y-%m-%d)";git push'
 
 # neovim
-alias nv='nvim'
+alias v='nvim'

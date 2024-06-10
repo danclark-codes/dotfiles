@@ -66,6 +66,9 @@ source ~/.fzf/shell/key-bindings.zsh
 # rust
 . "$HOME/.cargo/env"
 
+# neovim
+export PATH="$PATH:/opt/nvim-linux64/bin"
+
 # ~~~~~~~~~ Prompt ~~~~~~~~~~~~~~~~~~~~~~~~~~
 # using starship prompt for all prompt needs
 # github.com/starship/starship

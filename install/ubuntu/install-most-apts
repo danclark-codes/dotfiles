@@ -6,7 +6,7 @@
 sudo apt install curl exa git zsh -y
 
 # apt-gets
-sudo apt-get install python3-pip -y
+sudo apt-get install python3-pip neovim -y
 
 # required for alacritty
 sudo apt install cmake pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev python3 -y

@@ -20,8 +20,8 @@ ln -sf "$PWD/zshrc" "$HOME"/.zshrc
 ln -sf "$PWD/config/starship.toml" "$XDG_CONFIG_HOME"/starship.toml
 ln -sf "$PWD/config/alacritty.toml" "$XDG_CONFIG_HOME"/alacritty.toml
 
-# config folder for lazyvim, starship
-ln -sf "$PWD/config" "$HOME"/.config
+# config folder for nvim
+ln -sf "$PWD/config/nvim" "$HOME"/.config/nvim
 
 
 # install packages

@@ -14,8 +14,6 @@ alias home='cd $HOME'
 alias dot='$GHREPOS/dotfiles'
 
 # git
-unalias gs
-
 alias ga='git add --all'
 alias gs='git status'
 alias dirtypush='git add --all;git commit -m "dirty push - $(date +%Y-%m-%d)";git push'

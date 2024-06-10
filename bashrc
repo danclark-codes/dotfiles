@@ -83,5 +83,5 @@ fi
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 # rust
-source "$HOME/.cargo/env"
 . "$HOME/.cargo/env"
+

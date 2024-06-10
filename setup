@@ -32,3 +32,7 @@ done
 source "$PWD/fonts/Hack"
 
 sudo chsh -s $(which zsh)
+
+# set default terminal to alacritty
+sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator $(which alacritty) 50
+sudo update-alternatives --config x-terminal-emulator

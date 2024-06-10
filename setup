@@ -24,7 +24,7 @@ ln -sf "$PWD/config" "$HOME"/.config
 
 
 # install packages
-for f in ./install/debian/*; do
+for f in ./install/ubuntu/*; do
 	bash "$f"
 done
 

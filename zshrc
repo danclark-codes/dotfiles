@@ -11,11 +11,6 @@ esac
 export REPOS="$HOME/repos"
 export GITUSER="danclark-codes"
 export GHREPOS="$REPOS/github.com/$GITUSER"
-export DOTFILES="$GHREPOS/dotfiles"
-export SCRIPTS="$DOTFILES/scripts"
-export OBSIDIAN="$GHREPOS/obsidian-vault"
-export LAB="$GHREPOS/lab"
-
 setopt auto_cd
 
 # ~~~~~~~~~ History ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -58,6 +53,10 @@ function clone() {
 # alias definitions
 if [ -f ~/.bash_aliases ]; then
 	. ~/.bash_aliases
+fi
+
+if [ -f ~/.repo_aliases ]; then
+	. ~/.repo_aliases
 fi
 
 # Set up fzf key bindings and fuzzy completion

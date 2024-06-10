@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# clone and alias each repo
+
+
+# dotfiles
+clone dotfiles
+alias dot='cd $GHREPOS/dotfiles'
+alias scripts='cd $GHREPOS/dotfiles/scripts'
+
+# lab
+clone lab
+alias lab='cd $GHREPOS/lab'
+
+# vault
+clone obsidian-vault
+alias vault='cd $GHREPOS/obsidian-vault'
+

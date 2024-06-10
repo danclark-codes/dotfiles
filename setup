@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# exit on error
+set -e
+
+# takes too long, can be done manually
+# sudo apt update &>/dev/null && sudo apt upgrade -y &>/dev/null
+
+
+# variables for use in downstream scripts and commands
+# inspired by github.com/mischavandenburg/.dotfiles
+export XDG_CONFIG_HOME="$HOME"/.config
+mkdir -p "$XDG_CONFIG_HOME"/bash
+
+# symlinks
+ln -sf "$PWD/bashrc" "$HOME"/.bashrc
+ln -sf "$PWD/bash_aliases" "$HOME"/.bash_aliases
+ln -sf "$PWD/gitconfig" "$HOME"/.gitconfig
+ln -sf "$PWD/zsh/zshrc" "$HOME"/.zshrc
+ln -sf "$PWD/config/starship.toml" "$XDG_CONFIG_HOME"/starship.toml
+
+# config folder for lazyvim, starship
+ln -sf "$PWD/config" "$HOME"/.config
+
+
+# install packages
+for f in ./install/debian/*; do
+	bash "$f"
+done
+
+# install fonts
+source "$PWD/fonts/SourceCodePro"
+
+sudo chsh -s $(which zsh)

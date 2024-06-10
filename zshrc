@@ -16,12 +16,13 @@ export SCRIPTS="$DOTFILES/scripts"
 export OBSIDIAN="$GHREPOS/obsidian-vault"
 
 # ~~~~~~~~~ History ~~~~~~~~~~~~~~~~~~~~~~~~~
-HISTCONTROL=ignoreboth
+setopt INC_APPEND_HISTORY
+setopt HIST_FIND_NO_DUPS
+setopt HIST_IGNORE_ALL_DUPS
 
-shopt -s histappend
 HISTFILE="$HOME/.histfile"
-HISTSIZE=25000
-HISTFILESIZE=25000
+export HISTSIZE=25000
+export HISTFILESIZE=25000
 
 
 
@@ -29,7 +30,7 @@ HISTFILESIZE=25000
 
 # This function is stolen from rwxrob
 
-clone() {
+function clone() {
 	local repo="$1" user
 	local repo="${repo#https://github.com/}"
 	local repo="${repo#git@github.com:}"
@@ -41,14 +42,14 @@ clone() {
 	fi
 	local name="${repo##*/}"
 	local userd="$REPOS/github.com/$user"
-	local path="$userd/$name"
-	[[ -d "$path" ]] && cd "$path" && return
+	local repopath="$userd/$name"
+	[[ -d "$repopath" ]] && cd "$repopath" && return
 	mkdir -p "$userd"
 	cd "$userd"
 	echo gh repo clone "$user/$name" -- --recurse-submodule
 	gh repo clone "$user/$name" -- --recurse-submodule
 	cd "$name"
-} && export -f clone
+}
 
 # ~~~~~~~~~ Aliases ~~~~~~~~~~~~~~~~~~~~~~~~~
 # alias definitions
@@ -57,7 +58,8 @@ if [ -f ~/.bash_aliases ]; then
 fi
 
 # Set up fzf key bindings and fuzzy completion
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+source ~/.fzf/shell/completion.zsh
+source ~/.fzf/shell/key-bindings.zsh
 
 # rust
 . "$HOME/.cargo/env"

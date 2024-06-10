@@ -15,7 +15,7 @@ export XDG_CONFIG_HOME="$HOME"/.config
 ln -sf "$PWD/bashrc" "$HOME"/.bashrc
 ln -sf "$PWD/bash_aliases" "$HOME"/.bash_aliases
 ln -sf "$PWD/gitconfig" "$HOME"/.gitconfig
-ln -sf "$PWD/zsh/zshrc" "$HOME"/.zshrc
+ln -sf "$PWD/zshrc" "$HOME"/.zshrc
 ln -sf "$PWD/config/starship.toml" "$XDG_CONFIG_HOME"/starship.toml
 ln -sf "$PWD/config/alacritty.toml" "$XDG_CONFIG_HOME"/alacritty.toml
 

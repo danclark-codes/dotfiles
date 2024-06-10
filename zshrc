@@ -14,6 +14,9 @@ export GHREPOS="$REPOS/github.com/$GITUSER"
 export DOTFILES="$GHREPOS/dotfiles"
 export SCRIPTS="$DOTFILES/scripts"
 export OBSIDIAN="$GHREPOS/obsidian-vault"
+export LAB="$GHREPOS/lab"
+
+setopt auto_cd
 
 # ~~~~~~~~~ History ~~~~~~~~~~~~~~~~~~~~~~~~~
 setopt INC_APPEND_HISTORY

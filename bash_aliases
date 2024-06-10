@@ -11,7 +11,10 @@ alias ...='cd ../..'
 
 # navigation shortcuts
 alias home='cd $HOME'
-alias dot='$GHREPOS/dotfiles'
+alias dot='cd $DOTFILES'
+alias vault='cd $OBSIDIAN'
+alias scripts='cd $SCRIPTS'
+alias lab='cd $LAB'
 
 # git
 alias ga='git add --all'

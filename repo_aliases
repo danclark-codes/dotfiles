@@ -2,7 +2,6 @@
 
 # clone and alias each repo
 
-
 # dotfiles
 clone dotfiles
 alias dot='cd $GHREPOS/dotfiles'
@@ -16,3 +15,6 @@ alias lab='cd $GHREPOS/lab'
 clone obsidian-vault
 alias vault='cd $GHREPOS/obsidian-vault'
 
+# open-data-stack
+clone open-data-stack
+alias ods='cd $GHREPOS/open-data-stack'

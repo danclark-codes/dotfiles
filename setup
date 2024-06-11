@@ -6,7 +6,6 @@ set -e
 # takes too long, can be done manually
 # sudo apt update &>/dev/null && sudo apt upgrade -y &>/dev/null
 
-
 # variables for use in downstream scripts and commands
 # inspired by github.com/mischavandenburg/.dotfiles
 export XDG_CONFIG_HOME="$HOME"/.config
@@ -16,13 +15,13 @@ ln -sf "$PWD/bashrc" "$HOME"/.bashrc
 ln -sf "$PWD/bash_aliases" "$HOME"/.bash_aliases
 ln -sf "$PWD/repo_aliases" "$HOME"/.repo_aliases
 ln -sf "$PWD/gitconfig" "$HOME"/.gitconfig
+ln -sf "$PWD/vimrc" "$HOME"/.vimrc
 ln -sf "$PWD/zshrc" "$HOME"/.zshrc
 ln -sf "$PWD/config/starship.toml" "$XDG_CONFIG_HOME"/starship.toml
 ln -sf "$PWD/config/alacritty.toml" "$XDG_CONFIG_HOME"/alacritty.toml
 
 # config folder for nvim
 ln -sf "$PWD/config/nvim" "$HOME"/.config/nvim
-
 
 # install packages
 for f in ./install/ubuntu/*; do

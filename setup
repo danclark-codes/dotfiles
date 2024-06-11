@@ -17,6 +17,7 @@ ln -sf "$PWD/repo_aliases" "$HOME"/.repo_aliases
 ln -sf "$PWD/gitconfig" "$HOME"/.gitconfig
 ln -sf "$PWD/vimrc" "$HOME"/.vimrc
 ln -sf "$PWD/zshrc" "$HOME"/.zshrc
+ln -sf "$PWD/zshenv" "$HOME"/.zshenv
 ln -sf "$PWD/config/starship.toml" "$XDG_CONFIG_HOME"/starship.toml
 ln -sf "$PWD/config/alacritty.toml" "$XDG_CONFIG_HOME"/alacritty.toml
 

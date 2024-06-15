@@ -1,6 +1,7 @@
 add_newline = true
 
 format = """
+$python\
 $directory\
 $git_branch\
 $git_commit\
@@ -31,3 +32,5 @@ disabled = false
 added_style = "bright-green"
 deleted_style = "bright-red"
 
+[python]
+format = '${symbol}\($virtualenv\)'

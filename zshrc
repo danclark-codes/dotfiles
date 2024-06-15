@@ -43,6 +43,13 @@ source ~/.fzf/shell/key-bindings.zsh
 # neovim
 export PATH="$PATH:/opt/nvim-linux64/bin"
 
+# pyenv
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
+eval "$(pyenv virtualenv-init -)"
+
 # ~~~~~~~~~ Prompt ~~~~~~~~~~~~~~~~~~~~~~~~~~
 # using starship prompt for all prompt needs
 # github.com/starship/starship

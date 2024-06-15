@@ -8,7 +8,6 @@ alias la='exa -alhF --icons --group-directories-first'
 alias ..='cd ..'
 alias ...='cd ../..'
 
-
 # navigation shortcuts
 alias home='cd $HOME'
 # note - other shortcuts are done in .repo_aliases
@@ -20,3 +19,6 @@ alias dirtypush='git add --all;git commit -m "dirty push - $(date +%Y-%m-%d)";gi
 
 # neovim
 alias v='nvim'
+
+# docker
+dps = 'docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}"'

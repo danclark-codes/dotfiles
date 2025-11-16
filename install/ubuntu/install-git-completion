@@ -1,5 +1,0 @@
-#!/bin/bash
-# Install git-completion and git-prompt
-
-curl -sOL https://github.com/git/git/raw/master/contrib/completion/git-completion.bash
-mv ./git-completion.bash ~/.git-completion.bash

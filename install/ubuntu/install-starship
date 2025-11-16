@@ -1,9 +1,0 @@
-#!/bin/bash
-
-
-# starship - customisable prompt for any shell
-# github.com/starship/starship
-if ! command -v starship &> /dev/null; then
-	echo "command `starship` not found, installing"
-	curl -sS https://starship.rs/install.sh | sh
-fi

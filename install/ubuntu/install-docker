@@ -1,5 +1,0 @@
-#!/bin/bash
-
-clone docker/docker-install
-./install.sh
-dockerd-rootless-setuptool.sh install

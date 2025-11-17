@@ -1,10 +1,10 @@
 #!/bin/zsh
 
 if [ "$IS_MAC" = true ]; then
-  [ -d "/Applications/Visual Studio Code.app" ] && exit 0
+  [ -d "/Applications/Visual Studio Code.app" ] && return 0
   brew install --cask visual-studio-code
 elif [ "$IS_LINUX" = true ]; then
-  command -v code &>/dev/null && exit 0
+  command -v code &>/dev/null && return 0
 
   wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
   sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg

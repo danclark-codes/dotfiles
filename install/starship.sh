@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-command -v starship &>/dev/null && exit 0
+command -v starship &>/dev/null && return 0
 
 if [ "$IS_MAC" = true ]; then
   brew install starship

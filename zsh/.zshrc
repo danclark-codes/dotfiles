@@ -40,6 +40,9 @@ if [ -f "$ZDOTDIR/.zsh_functions" ]; then
     . "$ZDOTDIR/.zsh_functions"
 fi
 
+# completion system (must be loaded before any compdef calls)
+autoload -Uz compinit && compinit
+
 # platform specific config
 if [ "$IS_MAC" = true ]; then
     # macos specific

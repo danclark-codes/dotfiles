@@ -44,10 +44,10 @@ repo() {
   local dir=$(
     find ~/code -mindepth 2 -maxdepth 3 -type d |
     sort |
-    awk -F/ '{print $(NF-2)"/"$(NF-1)"/"$NF}' |  # get last 3 path components
-    sed 's|^\(.*\)/\([^/]*\)$|\x1b[90m\1/\x1b[0m\2|' |  # grey path, highlight name
+    awk -F/ '{print $(NF-2)"/"$(NF-1)"/"$NF}' |
+    sed 's|^\(.*\)/\([^/]*\)$|\x1b[90m\1/\x1b[0m\2|' |
     fzf --ansi --query="$1" |
-    sed 's/\x1b\[[0-9;]*m//g'  # strip color codes
+    sed 's/\x1b\[[0-9;]*m//g'
   )
   [[ -n "$dir" ]] && cd "$HOME/code/$dir"
 }

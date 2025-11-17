@@ -20,4 +20,7 @@ ln -sf "$DOTFILES_DIR/config/starship.toml" "$HOME/.config/starship.toml"
 rm -rf "$HOME/.config/alacritty"
 ln -sf "$DOTFILES_DIR/config/alacritty" "$HOME/.config/alacritty"
 
+# fonts
+"$DOTFILES_DIR/fonts/SauceCodeProNF"
+
 echo "Dotfiles setup complete. Restart your shell or run: source ~/.zshenv"

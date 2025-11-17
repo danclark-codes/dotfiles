@@ -16,4 +16,8 @@ ln -sf "$DOTFILES_DIR/git/.gitconfig" "$HOME/.gitconfig"
 mkdir -p "$HOME/.config"
 ln -sf "$DOTFILES_DIR/config/starship.toml" "$HOME/.config/starship.toml"
 
+# alacritty config
+rm -rf "$HOME/.config/alacritty"
+ln -sf "$DOTFILES_DIR/config/alacritty" "$HOME/.config/alacritty"
+
 echo "Dotfiles setup complete. Restart your shell or run: source ~/.zshenv"

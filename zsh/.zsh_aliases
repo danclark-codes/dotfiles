@@ -11,7 +11,7 @@ alias gs="git status"
 
 # eza as ls replacement
 # https://github.com/eza-community/eza
-alias ls="eza -l --icons=always --hyperlink"
+alias ls="eza -l --icons=always --hyperlink --color=auto"
 alias la="ls -a"
 alias ld="ls --only-dirs"
 alias lad="ls -a --only-dirs"

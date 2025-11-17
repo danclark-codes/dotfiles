@@ -18,15 +18,15 @@ Update git identity emails in `git/.gitconfig-*` files for each account.
 ## Structure
 
 ```
-.zshenv              # bootstrap, sets ZDOTDIR
-zsh/                 # all zsh configs
+.zshenv             # bootstrap, sets ZDOTDIR
+zsh/                # all zsh configs
   .zshrc            # main config with OS detection
   .zsh_aliases      # aliases
   .zsh_functions    # functions
-git/                 # git configs
+git/                # git configs
   .gitconfig        # main config with conditional includes
   .gitconfig-*      # identity files per account
-config/              # XDG configs
+config/             # XDG configs
   starship.toml     # starship prompt (empty = defaults)
 ```
 
@@ -39,4 +39,4 @@ config/              # XDG configs
 ## Platform Notes
 
 - macOS: Uses homebrew fzf, VS Code path
-- Linux: Uses ~/.fzf install, nvim path, pyenv
+- Linux: Uses ~/.fzf install, nvim path

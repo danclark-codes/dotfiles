@@ -55,13 +55,10 @@ elif [ "$IS_LINUX" = true ]; then
 
     # rust
     [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
-
-    # pyenv
-    export PYENV_ROOT="$HOME/.pyenv"
-    [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-    command -v pyenv >/dev/null && eval "$(pyenv init -)"
-    command -v pyenv >/dev/null && eval "$(pyenv virtualenv-init -)"
 fi
+
+# uv python (cross-platform)
+command -v uv >/dev/null && eval "$(uv generate-shell-completion zsh)"
 
 # nvm (cross-platform)
 export NVM_DIR="$HOME/.nvm"

@@ -10,6 +10,10 @@ style = "Regular"
 padding.x = 7
 padding.y = 0
 
+[window.dimensions]
+columns = 160
+lines = 45
+
 [general]
 # themes from github.com/alacritty/alacritty-theme
 

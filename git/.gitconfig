@@ -1,0 +1,14 @@
+[init]
+	branch = main
+
+# conditional includes for different github accounts
+[includeIf "gitdir:~/code/github.com/danclark-codes/"]
+	path = ~/code/github.com/danclark-codes/dotfiles/git/.gitconfig-danclark-codes
+[includeIf "gitdir:~/code/github.com/daniel-clark/"]
+	path = ~/code/github.com/danclark-codes/dotfiles/git/.gitconfig-daniel-clark
+[includeIf "gitdir:~/code/github.com/danclark-pao/"]
+	path = ~/code/github.com/danclark-codes/dotfiles/git/.gitconfig-danclark-pao
+
+[credential "https://github.com"]
+	helper =
+	helper = !/usr/bin/gh auth git-credential

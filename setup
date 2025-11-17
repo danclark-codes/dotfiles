@@ -3,37 +3,17 @@
 # exit on error
 set -e
 
-# takes too long, can be done manually
-# sudo apt update &>/dev/null && sudo apt upgrade -y &>/dev/null
+# get repo directory
+DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-# variables for use in downstream scripts and commands
-# inspired by github.com/mischavandenburg/.dotfiles
-export XDG_CONFIG_HOME="$HOME"/.config
+# single symlink for zsh bootstrap
+ln -sf "$DOTFILES_DIR/.zshenv" "$HOME/.zshenv"
 
-# symlinks
-ln -sf "$PWD/bashrc" "$HOME"/.bashrc
-ln -sf "$PWD/bash_aliases" "$HOME"/.bash_aliases
-ln -sf "$PWD/repo_aliases" "$HOME"/.repo_aliases
-ln -sf "$PWD/gitconfig" "$HOME"/.gitconfig
-ln -sf "$PWD/vimrc" "$HOME"/.vimrc
-ln -sf "$PWD/zshrc" "$HOME"/.zshrc
-ln -sf "$PWD/zshenv" "$HOME"/.zshenv
-ln -sf "$PWD/config/starship.toml" "$XDG_CONFIG_HOME"/starship.toml
-ln -sf "$PWD/config/alacritty.toml" "$XDG_CONFIG_HOME"/alacritty.toml
+# git config
+ln -sf "$DOTFILES_DIR/git/.gitconfig" "$HOME/.gitconfig"
 
-# config folder for nvim
-ln -sf "$PWD/config/nvim" "$HOME"/.config/nvim
+# starship config
+mkdir -p "$HOME/.config"
+ln -sf "$DOTFILES_DIR/config/starship.toml" "$HOME/.config/starship.toml"
 
-# install packages
-for f in ./install/ubuntu/*; do
-	bash "$f"
-done
-
-# install fonts
-source "$PWD/fonts/Hack"
-
-sudo chsh -s $(which zsh)
-
-# set default terminal to alacritty
-sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator $(which alacritty) 50
-sudo update-alternatives --config x-terminal-emulator
+echo "Dotfiles setup complete. Restart your shell or run: source ~/.zshenv"

@@ -7,8 +7,7 @@ Portable dotfiles for macOS and Linux using ZDOTDIR.
 ```bash
 git clone https://github.com/danclark-codes/dotfiles ~/code/github.com/danclark-codes/dotfiles
 cd ~/code/github.com/danclark-codes/dotfiles
-chmod +x setup  # if needed
-./setup
+./setup.sh
 ```
 
 Restart terminal or: `source ~/.zshenv`

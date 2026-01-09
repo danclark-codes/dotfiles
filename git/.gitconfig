@@ -1,5 +1,6 @@
 [init]
 	branch = main
+	defaultBranch = main
 
 # conditional includes for different github accounts
 [includeIf "gitdir:~/code/github.com/danclark-codes/"]

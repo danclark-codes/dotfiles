@@ -54,6 +54,8 @@ if [ "$IS_MAC" = true ]; then
 
 elif [ "$IS_LINUX" = true ]; then
     # linux specific
+    [ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"
+
     export PATH="$PATH:/opt/nvim-linux64/bin"
 
     # rust

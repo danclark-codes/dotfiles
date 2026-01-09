@@ -51,3 +51,9 @@ repo() {
   )
   [[ -n "$dir" ]] && cd "$HOME/code/$dir"
 }
+
+# chat - Start Claude in the chats repo
+chat() {
+    cd ~/code/github.com/danclark-codes/claude-chats
+    claude "$@"
+}

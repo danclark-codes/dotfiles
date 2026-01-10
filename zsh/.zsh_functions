@@ -2,7 +2,7 @@
 
 # check all git repos in ~/code for uncommitted or unpushed changes
 gstatus() {
-  find ~/code -type d -name ".git" 2>/dev/null | while read gitdir; do
+  find "$REPOS" -type d -name ".git" 2>/dev/null | while read gitdir; do
     repo_dir="${gitdir%.git}"
     cd "$repo_dir"
 
@@ -42,18 +42,18 @@ clone() {
 # find and cd into repo using fzf
 repo() {
   local dir=$(
-    find ~/code -mindepth 2 -maxdepth 3 -type d |
+    find "$REPOS" -mindepth 2 -maxdepth 3 -type d |
     sort |
     awk -F/ '{print $(NF-2)"/"$(NF-1)"/"$NF}' |
     sed 's|^\(.*\)/\([^/]*\)$|\x1b[90m\1/\x1b[0m\2|' |
     fzf --ansi --query="$1" |
     sed 's/\x1b\[[0-9;]*m//g'
   )
-  [[ -n "$dir" ]] && cd "$HOME/code/$dir"
+  [[ -n "$dir" ]] && cd "$REPOS/$dir"
 }
 
 # chat - Start Claude in the chats repo
 chat() {
-    cd ~/code/github.com/danclark-codes/claude-chats
+    cd "$GHREPOS/claude-chats"
     claude "$@"
 }

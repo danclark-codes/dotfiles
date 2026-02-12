@@ -70,15 +70,8 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
-# fzf (cross-platform but different paths)
-if [ "$IS_MAC" = true ]; then
-    # macos fzf from homebrew
-    command -v fzf >/dev/null && source <(fzf --zsh)
-elif [ "$IS_LINUX" = true ]; then
-    # linux fzf from git clone
-    [ -f ~/.fzf/shell/completion.zsh ] && source ~/.fzf/shell/completion.zsh
-    [ -f ~/.fzf/shell/key-bindings.zsh ] && source ~/.fzf/shell/key-bindings.zsh
-fi
+# fzf
+command -v fzf >/dev/null && source <(fzf --zsh)
 
 # starship prompt
 command -v starship >/dev/null && eval "$(starship init zsh)"

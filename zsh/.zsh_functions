@@ -4,18 +4,17 @@
 gsa() {
   find "$REPOS" -type d -name ".git" 2>/dev/null | while read gitdir; do
     repo_dir="${gitdir%.git}"
-    cd "$repo_dir"
 
     # check for uncommitted changes
-    if [[ -n $(git status --porcelain) ]]; then
+    if [[ -n $(git -C "$repo_dir" status --porcelain) ]]; then
       echo "📝 ${repo_dir#$HOME/code/} - dirty"
       continue
     fi
 
     # check for unpushed commits
-    local branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+    local branch=$(git -C "$repo_dir" rev-parse --abbrev-ref HEAD 2>/dev/null)
     if [[ -n "$branch" ]]; then
-      local unpushed=$(git log origin/$branch..HEAD 2>/dev/null | wc -l)
+      local unpushed=$(git -C "$repo_dir" log origin/$branch..HEAD 2>/dev/null | wc -l)
       if [[ $unpushed -gt 0 ]]; then
         echo "⬆️  ${repo_dir#$HOME/code/} - unpushed ($unpushed)"
       fi

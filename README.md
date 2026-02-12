@@ -31,7 +31,7 @@ config/             # XDG configs
 
 ## Functions
 
-- `gstatus` - check all repos in ~/code for uncommitted/unpushed changes
+- `gsa` - check all repos in ~/code for uncommitted/unpushed changes
 - `clone <url>` - clone to organized structure in ~/code
 - `repo [query]` - fzf search and cd into repos
 

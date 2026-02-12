@@ -24,3 +24,8 @@ key = "N"
 mods = "Control|Shift"
 action = "SpawnNewInstance"
 
+[[keyboard.bindings]]
+key = "T"
+mods = "Control"
+action = "SpawnNewInstance"
+

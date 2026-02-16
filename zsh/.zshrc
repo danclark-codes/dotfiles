@@ -65,10 +65,9 @@ fi
 # uv python (cross-platform)
 command -v uv >/dev/null && eval "$(uv generate-shell-completion zsh)"
 
-# nvm (cross-platform)
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+# pnpm
+export PNPM_HOME="$HOME/.local/share/pnpm"
+[[ ":$PATH:" != *":$PNPM_HOME:"* ]] && export PATH="$PNPM_HOME:$PATH"
 
 # fzf
 command -v fzf >/dev/null && source <(fzf --zsh)

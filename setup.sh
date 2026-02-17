@@ -45,6 +45,10 @@ ln -sf "$DOTFILES_DIR/git/.gitconfig" "$HOME/.gitconfig"
 mkdir -p "$HOME/.config"
 ln -sf "$DOTFILES_DIR/config/starship.toml" "$HOME/.config/starship.toml"
 
+# claude code config
+mkdir -p "$HOME/.claude"
+ln -sf "$DOTFILES_DIR/config/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
+
 # alacritty config
 rm -rf "$HOME/.config/alacritty"
 ln -sf "$DOTFILES_DIR/config/alacritty" "$HOME/.config/alacritty"

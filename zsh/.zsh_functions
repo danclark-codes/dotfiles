@@ -56,3 +56,12 @@ chat() {
     cd "$GHREPOS/claude-chats"
     claude "$@"
 }
+
+# export claude conversation history for all git repos in ~/code
+claude-export-all() {
+  find "$REPOS" -type d -name ".git" 2>/dev/null | while read gitdir; do
+    repo_dir="${gitdir%/.git}"
+    echo "==> ${repo_dir#$REPOS/}"
+    (cd "$repo_dir" && claude-export) || echo "  ⚠ failed"
+  done
+}

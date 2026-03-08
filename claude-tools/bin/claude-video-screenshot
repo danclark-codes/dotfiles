@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+DESCRIPTION="Extract JPG screenshots from a video at specified timestamps."
+set -euo pipefail
+
+# --- help ---
+if [[ "${1:-}" == "--help" ]]; then
+  cat <<'EOF'
+Usage: claude-video-screenshot <video-file> <timestamp> [timestamp...]
+
+Extracts JPG screenshots from a video at the given timestamps.
+
+Timestamps should be in HH:MM:SS or MM:SS format.
+
+Produces files alongside the video:
+  <name>-ss-HH:MM:SS.jpg    One per timestamp
+
+Prerequisites: ffmpeg
+EOF
+  exit 0
+fi
+
+if [[ $# -lt 2 ]]; then
+  echo "Usage: claude-video-screenshot <video-file> <timestamp> [timestamp...]" >&2
+  echo "Run with --help for details." >&2
+  exit 1
+fi
+
+# --- prereq checks ---
+if ! command -v ffmpeg &>/dev/null; then
+  echo "ERROR: ffmpeg not found. Install with: brew install ffmpeg" >&2
+  exit 1
+fi
+
+# --- resolve input ---
+INPUT="$1"
+shift
+
+if [[ ! -f "$INPUT" ]]; then
+  echo "ERROR: File not found: $INPUT" >&2
+  exit 1
+fi
+
+VIDEO_DIR="$(cd "$(dirname "$INPUT")" && pwd)"
+VIDEO_BASE="$(basename "$INPUT")"
+VIDEO_NAME="${VIDEO_BASE%.*}"
+
+# --- extract screenshots ---
+echo "Extracting $# screenshot(s)..."
+for TS in "$@"; do
+  # Normalize timestamp to HH:MM:SS
+  if [[ "$TS" =~ ^[0-9]+:[0-9]{2}$ ]]; then
+    # MM:SS -> 00:MM:SS
+    NORM_TS="00:${TS}"
+  elif [[ "$TS" =~ ^[0-9]+:[0-9]{2}:[0-9]{2}$ ]]; then
+    NORM_TS="$TS"
+  else
+    echo "WARNING: Skipping invalid timestamp: $TS" >&2
+    continue
+  fi
+
+  OUTFILE="${VIDEO_DIR}/${VIDEO_NAME}-ss-${NORM_TS}.jpg"
+  ffmpeg -ss "$TS" -i "$INPUT" -frames:v 1 -q:v 2 -y "$OUTFILE" 2>/dev/null
+  echo "  ${OUTFILE}"
+done
+
+echo "Done."

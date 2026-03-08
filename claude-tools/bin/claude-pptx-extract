@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+DESCRIPTION="Extract text, speaker notes, and rendered slide images from a .pptx file."
+set -euo pipefail
+
+# --- help ---
+if [[ "${1:-}" == "--help" ]]; then
+  cat <<'EOF'
+Usage: claude-pptx-extract <presentation.pptx>
+
+Extracts text, speaker notes, and rendered slide images from a PowerPoint file.
+
+Produces files alongside the presentation:
+  <name>-content.md          Structured markdown with text and notes
+  <name>-slide-01.png        Rendered slide images (one per slide)
+  <name>-slide-02.png
+  ...
+
+Prerequisites: uv (https://docs.astral.sh/uv/)
+EOF
+  exit 0
+fi
+
+if [[ $# -lt 1 ]]; then
+  echo "Usage: claude-pptx-extract <presentation.pptx>" >&2
+  echo "Run with --help for details." >&2
+  exit 1
+fi
+
+# --- prereq checks ---
+if ! command -v uv &>/dev/null; then
+  echo "ERROR: uv not found. Install with: curl -LsSf https://astral.sh/uv/install.sh | sh" >&2
+  exit 1
+fi
+
+# --- resolve input ---
+INPUT="$1"
+
+if [[ ! -f "$INPUT" ]]; then
+  echo "ERROR: File not found: $INPUT" >&2
+  exit 1
+fi
+
+# --- run extraction ---
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+uv run --with python-pptx,Pillow python3 "$SCRIPT_DIR/claude-pptx-extract.py" "$INPUT"

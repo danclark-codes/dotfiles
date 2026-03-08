@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+DESCRIPTION="Extract transcript (SRT + TXT) from a video file using whisper.cpp."
+set -euo pipefail
+
+# --- defaults ---
+MODEL="${WHISPER_MODEL:-${HOME}/.local/share/whisper-cpp/ggml-large-v3-turbo.bin}"
+
+# --- help ---
+if [[ "${1:-}" == "--help" ]]; then
+  cat <<'EOF'
+Usage: claude-video-transcript <video-file>
+
+Extracts a transcript from a video file using whisper.cpp.
+
+Produces two files alongside the video:
+  <name>-transcript.srt    Timestamped SRT subtitle file
+  <name>-transcript.txt    Plain text transcript
+
+Environment:
+  WHISPER_MODEL    Path to GGML model file
+                   Default: ~/.local/share/whisper-cpp/ggml-large-v3-turbo.bin
+
+Prerequisites: ffmpeg, whisper-cli (brew install whisper-cpp)
+Model download:  huggingface-cli download ggerganov/whisper.cpp ggml-large-v3-turbo.bin \
+                   --local-dir ~/.local/share/whisper-cpp/
+EOF
+  exit 0
+fi
+
+if [[ $# -lt 1 ]]; then
+  echo "Usage: claude-video-transcript <video-file>" >&2
+  echo "Run with --help for details." >&2
+  exit 1
+fi
+
+# --- prereq checks ---
+if ! command -v ffmpeg &>/dev/null; then
+  echo "ERROR: ffmpeg not found. Install with: brew install ffmpeg" >&2
+  exit 1
+fi
+
+if ! command -v whisper-cli &>/dev/null; then
+  echo "ERROR: whisper-cli not found. Install with: brew install whisper-cpp" >&2
+  exit 1
+fi
+
+if [[ ! -f "$MODEL" ]]; then
+  echo "ERROR: Whisper model not found at $MODEL" >&2
+  echo "Download with:" >&2
+  echo "  huggingface-cli download ggerganov/whisper.cpp ggml-large-v3-turbo.bin --local-dir ~/.local/share/whisper-cpp/" >&2
+  exit 1
+fi
+
+# --- resolve input ---
+INPUT="$1"
+if [[ ! -f "$INPUT" ]]; then
+  echo "ERROR: File not found: $INPUT" >&2
+  exit 1
+fi
+
+VIDEO_DIR="$(cd "$(dirname "$INPUT")" && pwd)"
+VIDEO_BASE="$(basename "$INPUT")"
+VIDEO_NAME="${VIDEO_BASE%.*}"
+OUTPUT_PREFIX="${VIDEO_DIR}/${VIDEO_NAME}-transcript"
+
+# --- extract audio to temp WAV ---
+TMPWAV="$(mktemp "${TMPDIR:-/tmp}/whisper-XXXXXX.wav")"
+trap 'rm -f "$TMPWAV"' EXIT
+
+echo "Extracting audio..."
+ffmpeg -i "$INPUT" -acodec pcm_s16le -ar 16000 -ac 1 -y "$TMPWAV" 2>/dev/null
+
+# --- run whisper ---
+echo "Transcribing..."
+whisper-cli \
+  -m "$MODEL" \
+  -f "$TMPWAV" \
+  -osrt -otxt \
+  -of "$OUTPUT_PREFIX" \
+  --no-prints 2>/dev/null
+
+echo "Created:"
+echo "  ${OUTPUT_PREFIX}.srt"
+echo "  ${OUTPUT_PREFIX}.txt"

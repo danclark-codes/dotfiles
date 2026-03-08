@@ -1,0 +1,155 @@
+#!/usr/bin/env bash
+DESCRIPTION="Export Claude conversation history to daily markdown and JSONL files. Run from within a repo."
+set -euo pipefail
+
+# --- help ---
+if [[ "${1:-}" == "--help" ]]; then
+  cat <<'EOF'
+Usage: claude-export
+
+Exports Claude Code conversation history for the current repo.
+
+Finds all Claude JSONL session files for this project, then produces
+two files per day in <repo>/.claude/history/:
+
+  YYYY-MM-DD.jsonl      Raw JSONL lines for that date
+  YYYY-MM-DD-chat.md    Readable conversation: human/assistant turns with
+                        tool calls shown as one-line summaries
+
+Today's files are always regenerated. Past dates are only created if missing.
+Safe to run repeatedly.
+EOF
+  exit 0
+fi
+
+# --- find project root (walk up max 5 levels looking for .git/) ---
+find_git_root() {
+  local dir="$PWD" depth=0
+  while [[ $depth -lt 5 ]]; do
+    [[ -d "$dir/.git" ]] && echo "$dir" && return 0
+    dir="$(dirname "$dir")"
+    depth=$((depth + 1))
+  done
+  echo "ERROR: No .git directory found within 5 levels of $PWD" >&2
+  exit 1
+}
+PROJECT_ROOT=$(find_git_root)
+
+# --- derive claude projects directory (replace / and . with -) ---
+CLAUDE_DIR_NAME=$(echo "$PROJECT_ROOT" | sed 's/[\/.]/-/g')
+CLAUDE_PROJ_DIR="$HOME/.claude/projects/$CLAUDE_DIR_NAME"
+
+if [[ ! -d "$CLAUDE_PROJ_DIR" ]]; then
+  echo "ERROR: Claude project directory not found: $CLAUDE_PROJ_DIR" >&2
+  exit 1
+fi
+
+OUT_DIR="$PROJECT_ROOT/.claude/history"
+mkdir -p "$OUT_DIR"
+TODAY=$(date -u '+%Y-%m-%d')
+
+# --- find all JSONL source files ---
+JSONL_FILES=()
+while IFS= read -r f; do
+  JSONL_FILES+=("$f")
+done < <(find "$CLAUDE_PROJ_DIR" -name '*.jsonl' -type f 2>/dev/null)
+
+if [[ ${#JSONL_FILES[@]} -eq 0 ]]; then
+  echo "No JSONL files found in $CLAUDE_PROJ_DIR"
+  exit 0
+fi
+
+# --- bucket every line by date (single awk pass) ---
+# Snapshot which date files already exist before we start writing.
+EXISTING_DATES=" "
+for ef in "$OUT_DIR"/*.jsonl; do
+  [[ -f "$ef" ]] || continue
+  EXISTING_DATES="$EXISTING_DATES$(basename "$ef" .jsonl) "
+done
+
+# Clear today's file so we can rebuild it from scratch
+rm -f "$OUT_DIR/$TODAY.jsonl"
+
+# Extract date from timestamp field via regex, write original lines to date files.
+# Single awk process — no per-line jq spawning.
+awk -v today="$TODAY" -v existing="$EXISTING_DATES" -v out_dir="$OUT_DIR" '
+{
+  if (match($0, /"timestamp"[[:space:]]*:[[:space:]]*"[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/)) {
+    date = substr($0, RSTART + RLENGTH - 10, 10)
+    if (date != today && index(existing, " " date " ") > 0) next
+    file = out_dir "/" date ".jsonl"
+    print >> file
+  }
+}' "${JSONL_FILES[@]}"
+
+# --- generate chat markdown for each date that has a jsonl file ---
+# Only regenerate today's markdown. Past dates: only if markdown is missing.
+
+render_chat_md() {
+  local jsonl_file="$1" out_md="$2"
+  local now
+  now=$(date '+%Y-%m-%d %H:%M:%S')
+
+  # Single jq invocation: slurp all lines, filter/sort/group, output markdown
+  jq -rs --arg now "$now" '
+    [.[] | select(.type == "user" or .type == "assistant")]
+    | group_by(.sessionId)
+    | map(sort_by(.timestamp))
+    | map(
+        . as $msgs |
+        "\n\n## Session: " + (($msgs[0].sessionId // "")[0:8]) + " (" + (($msgs[0].timestamp // "")[11:16]) + ")" +
+        ($msgs | map(
+          ((.timestamp // "")[11:19]) as $time_hms |
+          if .type == "user" then
+            if (.message.content | type) == "string" then
+              "\n\n### Human (" + $time_hms + ")\n\n" + .message.content
+            elif (.message.content | type) == "array" then
+              if ([.message.content[] | select(.type == "tool_result")] | length) > 0 then
+                ""
+              else
+                ([.message.content[] | select(.type == "text") | .text] | join("\n")) as $text |
+                if ($text | length) > 0 then
+                  "\n\n### Human (" + $time_hms + ")\n\n" + $text
+                else "" end
+              end
+            else "" end
+          elif .type == "assistant" then
+            ([(.message.content // [])[] |
+              if .type == "text" then
+                if (.text | gsub("\\s";"") | length) > 0 then .text else empty end
+              elif .type == "tool_use" then
+                "> Tool: " + .name + " " + (
+                  if .name == "Read" or .name == "Write" or .name == "Edit" then (.input.file_path // "")
+                  elif .name == "Bash" then ((.input.command // "") | split("\n")[0] | .[0:80])
+                  elif .name == "Grep" or .name == "Glob" then (.input.pattern // "")
+                  else ""
+                  end)
+              else empty
+              end
+            ] | join("\n")) as $rendered |
+            if ($rendered | length) > 0 then
+              "\n\n### Assistant (" + $time_hms + ")\n\n" + $rendered
+            else "" end
+          else "" end
+        ) | join(""))
+      )
+    | "**Last Updated:** " + $now + "\n\n---" + join("")
+  ' < "$jsonl_file" > "$out_md"
+}
+
+total_dates=0
+for jsonl_file in "$OUT_DIR"/*.jsonl; do
+  [[ -f "$jsonl_file" ]] || continue
+  date_str=$(basename "$jsonl_file" .jsonl)
+  out_md="$OUT_DIR/$date_str-chat.md"
+
+  # Past dates: skip if markdown already exists
+  if [[ "$date_str" != "$TODAY" && -f "$out_md" ]]; then
+    continue
+  fi
+
+  render_chat_md "$jsonl_file" "$out_md"
+  total_dates=$((total_dates + 1))
+done
+
+echo "Processed $total_dates dates"

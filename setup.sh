@@ -39,6 +39,9 @@ INSTALL_DIR="$DOTFILES_DIR/install"
 . "$INSTALL_DIR/firefox.sh"
 . "$INSTALL_DIR/vscode.sh"
 
+echo "==> Installing Claude tools..."
+"$DOTFILES_DIR/claude-tools/install.sh"
+
 echo "==> Setting up dotfiles..."
 
 # single symlink for zsh bootstrap

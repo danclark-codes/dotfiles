@@ -38,6 +38,19 @@ clone() {
   cd "$target_dir"
 }
 
+# clone git repo without history
+clone-sparse() {
+  local repo_path=${1#*//}
+  repo_path=${repo_path#www.}
+  local target_dir="$HOME/code/${repo_path%.git}"
+
+  if [[ ! -d "$target_dir" ]]; then
+    mkdir -p "${target_dir:h}" && git clone --depth 1 "$1" "$target_dir"
+  fi
+
+  cd "$target_dir"
+}
+
 # find and cd into repo using fzf
 repo() {
   local dir=$(

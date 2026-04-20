@@ -71,10 +71,21 @@ chat() {
 }
 
 # export claude conversation history for all git repos in ~/code
+# prints one line per repo that actually exported something (skips no-op / no-history / error cases)
 claude-export-all() {
+  local gitdir repo_dir rel output n
   find "$REPOS" -type d -name ".git" 2>/dev/null | while read gitdir; do
     repo_dir="${gitdir%/.git}"
-    echo "==> ${repo_dir#$REPOS/}"
-    (cd "$repo_dir" && claude-export) || echo "  ⚠ failed"
+    rel="${repo_dir#$REPOS/}"
+    output=$(cd "$repo_dir" && claude-export 2>&1)
+    [[ "$output" == *"Processed "* ]] || continue
+    n=${output##*Processed }
+    n=${n%% dates*}
+    [[ "$n" == "0" ]] && continue
+    if [[ "$n" == "1" ]]; then
+      echo "$rel (1 date)"
+    else
+      echo "$rel ($n dates)"
+    fi
   done
 }

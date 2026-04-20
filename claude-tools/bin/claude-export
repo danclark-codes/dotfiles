@@ -46,7 +46,6 @@ fi
 
 OUT_DIR="$PROJECT_ROOT/.claude/history"
 mkdir -p "$OUT_DIR"
-TODAY=$(date -u '+%Y-%m-%d')
 
 # --- find all JSONL source files ---
 JSONL_FILES=()
@@ -59,28 +58,32 @@ if [[ ${#JSONL_FILES[@]} -eq 0 ]]; then
   exit 0
 fi
 
-# --- bucket every line by date (single awk pass) ---
-# Snapshot which date files already exist before we start writing.
-EXISTING_DATES=" "
-for ef in "$OUT_DIR"/*.jsonl; do
-  [[ -f "$ef" ]] || continue
-  EXISTING_DATES="$EXISTING_DATES$(basename "$ef" .jsonl) "
-done
+# --- bucket every line by date into .new files, then promote changed ones ---
+# Long-running sessions spanning multiple days append to past-dated buckets,
+# so we always rebuild every date from source. Writing to .jsonl.new first
+# lets us detect which dates actually changed, so markdown regen is cheap.
+rm -f "$OUT_DIR"/*.jsonl.new
 
-# Clear today's file so we can rebuild it from scratch
-rm -f "$OUT_DIR/$TODAY.jsonl"
-
-# Extract date from timestamp field via regex, write original lines to date files.
-# Single awk process — no per-line jq spawning.
-awk -v today="$TODAY" -v existing="$EXISTING_DATES" -v out_dir="$OUT_DIR" '
+awk -v out_dir="$OUT_DIR" '
 {
   if (match($0, /"timestamp"[[:space:]]*:[[:space:]]*"[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/)) {
     date = substr($0, RSTART + RLENGTH - 10, 10)
-    if (date != today && index(existing, " " date " ") > 0) next
-    file = out_dir "/" date ".jsonl"
+    file = out_dir "/" date ".jsonl.new"
     print >> file
   }
 }' "${JSONL_FILES[@]}"
+
+# Promote changed .new files; discard unchanged ones. The mtime bump on
+# changed files drives the markdown-regen decision below.
+for newf in "$OUT_DIR"/*.jsonl.new; do
+  [[ -f "$newf" ]] || continue
+  oldf="${newf%.new}"
+  if [[ ! -f "$oldf" ]] || ! cmp -s "$oldf" "$newf"; then
+    mv "$newf" "$oldf"
+  else
+    rm "$newf"
+  fi
+done
 
 # --- generate chat markdown for each date that has a jsonl file ---
 # Only regenerate today's markdown. Past dates: only if markdown is missing.
@@ -90,13 +93,19 @@ render_chat_md() {
   local now
   now=$(date '+%Y-%m-%d %H:%M:%S')
 
-  # Single jq invocation: slurp all lines, filter/sort/group, output markdown
+  # Single jq invocation: slurp all lines, filter/sort/group, output markdown.
+  # Skips regular tool calls; preserves subagent (Agent/Task) prompts and responses.
   jq -rs --arg now "$now" '
     [.[] | select(.type == "user" or .type == "assistant")]
     | group_by(.sessionId)
     | map(sort_by(.timestamp))
     | map(
         . as $msgs |
+        ([$msgs[]
+          | select(.type == "assistant")
+          | (.message.content // [])[]
+          | select(.type == "tool_use" and (.name == "Agent" or .name == "Task"))
+          | .id]) as $subagent_ids |
         "\n\n## Session: " + (($msgs[0].sessionId // "")[0:8]) + " (" + (($msgs[0].timestamp // "")[11:16]) + ")" +
         ($msgs | map(
           ((.timestamp // "")[11:19]) as $time_hms |
@@ -104,7 +113,18 @@ render_chat_md() {
             if (.message.content | type) == "string" then
               "\n\n### Human (" + $time_hms + ")\n\n" + .message.content
             elif (.message.content | type) == "array" then
-              if ([.message.content[] | select(.type == "tool_result")] | length) > 0 then
+              ([.message.content[]
+                | select(.type == "tool_result" and ([.tool_use_id] | inside($subagent_ids)))]) as $sub_results |
+              if ($sub_results | length) > 0 then
+                ($sub_results | map(
+                  (if (.content | type) == "string" then .content
+                   elif (.content | type) == "array" then ([.content[] | select(.type == "text") | .text] | join("\n"))
+                   else "" end) as $body |
+                  if ($body | length) > 0 then
+                    "\n\n### Subagent Response (" + $time_hms + ")\n\n" + $body
+                  else "" end
+                ) | join(""))
+              elif ([.message.content[] | select(.type == "tool_result")] | length) > 0 then
                 ""
               else
                 ([.message.content[] | select(.type == "text") | .text] | join("\n")) as $text |
@@ -117,13 +137,10 @@ render_chat_md() {
             ([(.message.content // [])[] |
               if .type == "text" then
                 if (.text | gsub("\\s";"") | length) > 0 then .text else empty end
-              elif .type == "tool_use" then
-                "> Tool: " + .name + " " + (
-                  if .name == "Read" or .name == "Write" or .name == "Edit" then (.input.file_path // "")
-                  elif .name == "Bash" then ((.input.command // "") | split("\n")[0] | .[0:80])
-                  elif .name == "Grep" or .name == "Glob" then (.input.pattern // "")
-                  else ""
-                  end)
+              elif .type == "tool_use" and (.name == "Agent" or .name == "Task") then
+                "\n\n**Subagent Prompt**" +
+                (if (.input.description // "") != "" then " — " + .input.description else "" end) +
+                ":\n\n" + (.input.prompt // "")
               else empty
               end
             ] | join("\n")) as $rendered |
@@ -143,8 +160,8 @@ for jsonl_file in "$OUT_DIR"/*.jsonl; do
   date_str=$(basename "$jsonl_file" .jsonl)
   out_md="$OUT_DIR/$date_str-chat.md"
 
-  # Past dates: skip if markdown already exists
-  if [[ "$date_str" != "$TODAY" && -f "$out_md" ]]; then
+  # Regenerate only if markdown is missing or older than its jsonl (i.e. jsonl changed this run).
+  if [[ -f "$out_md" && ! "$jsonl_file" -nt "$out_md" ]]; then
     continue
   fi
 

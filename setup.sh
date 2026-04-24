@@ -39,6 +39,7 @@ INSTALL_DIR="$DOTFILES_DIR/install"
 . "$INSTALL_DIR/alacritty.sh"
 . "$INSTALL_DIR/firefox.sh"
 . "$INSTALL_DIR/vscode.sh"
+. "$INSTALL_DIR/whisper-cpp.sh"
 
 echo "==> Installing Claude tools..."
 "$DOTFILES_DIR/claude-tools/install.sh"

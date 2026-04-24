@@ -2,3 +2,4 @@ zsh/.zsh_sessions
 zsh/.zcompdump
 docs/plans/
 .claude/
+git/.gitconfig-*

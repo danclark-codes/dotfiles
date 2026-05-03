@@ -38,6 +38,7 @@ INSTALL_DIR="$DOTFILES_DIR/install"
 . "$INSTALL_DIR/uv.sh"
 . "$INSTALL_DIR/alacritty.sh"
 . "$INSTALL_DIR/firefox.sh"
+. "$INSTALL_DIR/obsidian.sh"
 . "$INSTALL_DIR/vscode.sh"
 . "$INSTALL_DIR/whisper-cpp.sh"
 

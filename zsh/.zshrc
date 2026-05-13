@@ -60,6 +60,12 @@ elif [ "$IS_LINUX" = true ]; then
 
     # rust
     [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+
+    # .net sdk
+    if [ -d "$HOME/.dotnet" ]; then
+        export DOTNET_ROOT="$HOME/.dotnet"
+        export PATH="$PATH:$DOTNET_ROOT"
+    fi
 fi
 
 # uv python (cross-platform)

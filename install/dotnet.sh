@@ -7,8 +7,8 @@ elif [ "$IS_LINUX" = true ]; then
   # install latest LTS plus .NET 8 (needed by spacetimedb)
   dotnet_bin="$HOME/.dotnet/dotnet"
   if [ -x "$dotnet_bin" ] \
-    && "$dotnet_bin" --list-sdks | grep -q '^8\.' \
-    && "$dotnet_bin" --list-sdks | grep -q '^10\.'; then
+    && "$dotnet_bin" --list-sdks 2>/dev/null | grep -q '^8\.' \
+    && "$dotnet_bin" --list-sdks 2>/dev/null | grep -E '^[0-9]+\.' | grep -vq '^8\.'; then
     return 0
   fi
 

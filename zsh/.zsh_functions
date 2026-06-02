@@ -89,3 +89,29 @@ claude-export-all() {
     fi
   done
 }
+
+# show the most recently active repos by claude export history
+# lists repos with a .claude/history dir, sorted by their newest history date
+# (the date in the filename = the conversation date, which survives re-exports)
+# usage: claude-resume [count]   (default 5)
+claude-resume() {
+  # locals declared once up front; re-declaring inside a loop makes zsh echo them
+  local count="${1:-5}"
+  local now=$(date +%s)
+  local histdir repo_dir rel latest hdate ts days ago
+  find "$REPOS" -type d -path '*/.claude/history' 2>/dev/null | while read histdir; do
+    repo_dir="${histdir%/.claude/history}"
+    rel="${repo_dir#$REPOS/}"
+    # newest YYYY-MM-DD encoded in a history filename
+    # (glob, not `ls`: the ls alias -> eza is baked in at function definition time)
+    latest=$(print -rl -- "$histdir"/*(N:t) | grep -oE '^[0-9]{4}-[0-9]{2}-[0-9]{2}' | sort -r | head -1)
+    [[ -n "$latest" ]] && printf '%s\t%s\n' "$latest" "$rel"
+  done | sort -r | head -n "$count" | while IFS=$'\t' read hdate rel; do
+    ts=$(date -d "$hdate" +%s)
+    days=$(( (now - ts) / 86400 ))
+    if [[ $days -eq 0 ]]; then ago="today"
+    elif [[ $days -eq 1 ]]; then ago="yesterday"
+    else ago="$days days ago"; fi
+    printf '%-12s %-45s (%s)\n' "$hdate" "$rel" "$ago"
+  done
+}

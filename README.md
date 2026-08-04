@@ -49,4 +49,4 @@ config/             # XDG configs
 ## Platform Notes
 
 - macOS: Uses homebrew fzf, VS Code path
-- Linux: Uses ~/.fzf install, nvim path
+- Linux: Uses apt fzf, nvim path

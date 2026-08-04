@@ -4,13 +4,24 @@ Portable dotfiles for macOS and Linux using ZDOTDIR.
 
 ## Setup
 
+Fresh machine — installs git and curl, clones the repo, runs setup:
+
 ```bash
-git clone https://github.com/danclark-codes/dotfiles ~/code/github.com/danclark-codes/dotfiles
+curl -fsSL https://raw.githubusercontent.com/danclark-codes/dotfiles/main/bootstrap.sh | bash
+```
+
+If curl is missing: `wget -qO- https://raw.githubusercontent.com/danclark-codes/dotfiles/main/bootstrap.sh | bash`
+
+Already cloned:
+
+```bash
 cd ~/code/github.com/danclark-codes/dotfiles
 ./setup.sh
 ```
 
-Restart terminal or: `source ~/.zshenv`
+Run `setup.sh`, never source it — sourcing breaks the `$0` path lookup.
+
+Setup sets zsh as the login shell, so log out and back in to pick it up.
 
 Update git identity emails in `git/.gitconfig-*` files for each account.
 

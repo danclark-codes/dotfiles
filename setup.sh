@@ -18,6 +18,7 @@ INSTALL_DIR="$DOTFILES_DIR/install"
 # run install scripts in order
 . "$INSTALL_DIR/brew.sh"
 . "$INSTALL_DIR/apt.sh"
+. "$INSTALL_DIR/zsh.sh"
 . "$INSTALL_DIR/azure-cli.sh"
 . "$INSTALL_DIR/binaryen.sh"
 . "$INSTALL_DIR/cargo.sh"

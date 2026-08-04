@@ -5,3 +5,6 @@
 
 sudo apt update
 sudo apt upgrade -y
+
+# base tools the other install scripts assume exist
+sudo apt install -y curl gnupg unzip

@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# exit on error
-set -e
-
 # get repo directory
 DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
 
